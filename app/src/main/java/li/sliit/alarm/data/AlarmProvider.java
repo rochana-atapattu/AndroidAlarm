@@ -63,6 +63,11 @@ public class AlarmProvider extends ContentProvider{
             default:
                 throw new IllegalArgumentException("Cannot resolve URI :" + uri);
         }
+
+        //set notification URI on the cursor
+        //if the data at this URI changes, then we know we need to update the cursor
+        //listener atteched to this resolver will be notified
+        cursor.setNotificationUri(getContext().getContentResolver(),uri);
         return cursor;
     }
 
@@ -108,7 +113,11 @@ public class AlarmProvider extends ContentProvider{
             case ALARMS_ID:
                 selection = AlarmEntry._ID + "=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                return db.delete(AlarmEntry.TABLE_NAME,selection,selectionArgs);
+                int rowsDeleted = db.delete(AlarmEntry.TABLE_NAME,selection,selectionArgs);
+                if (rowsDeleted != 0){
+                    getContext().getContentResolver().notifyChange(uri,null);
+                }
+                return rowsDeleted;
             default:
                 throw new IllegalArgumentException("Cannot resolve URI :" + uri);
         }
@@ -148,6 +157,7 @@ public class AlarmProvider extends ContentProvider{
             return null;
         }
 
+        getContext().getContentResolver().notifyChange(uri,null);
         //return uri with the id
         return ContentUris.withAppendedId(uri,id);
     }
@@ -165,6 +175,7 @@ public class AlarmProvider extends ContentProvider{
         }
         SQLiteDatabase db = mDbHelper.getWritableDatabase();
 
+        getContext().getContentResolver().notifyChange(uri,null);
         return  db.update(AlarmEntry.TABLE_NAME,values,selection,selectionArgs);
     }
 }

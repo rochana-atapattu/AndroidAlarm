@@ -1,5 +1,6 @@
 package li.sliit.alarm;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,13 +9,13 @@ import android.widget.TextView;
 
 import java.util.List;
 
-public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> {
+public class AlarmAdapter extends RecyclerView.Adapter<BaseViewHolder> {
     private List<String> values;
 
     // Provide a reference to the views for each data item
     // Complex data items may need more than one view per item, and
     // you provide access to all the views for a data item in a view holder
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends BaseViewHolder {
         // each data item is just a string in this case
         public TextView txtHeader;
         public TextView txtFooter;
@@ -25,6 +26,19 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
             layout = v;
             txtHeader = (TextView) v.findViewById(R.id.firstLine);
             txtFooter = (TextView) v.findViewById(R.id.secondLine);
+        }
+
+        @Override
+        protected void clear() {
+            txtFooter.setText("");
+            txtHeader.setText("");
+        }
+
+        @Override
+        public void onBind(int position) {
+            super.onBind(position);
+
+
         }
     }
 
@@ -57,8 +71,13 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         return vh;
     }
 
-    // Replace the contents of a view (invoked by the layout manager)
     @Override
+    public void onBindViewHolder(@NonNull BaseViewHolder baseViewHolder, int i) {
+
+    }
+
+    // Replace the contents of a view (invoked by the layout manager)
+    /*@Override
     public void onBindViewHolder(ViewHolder holder, final int position) {
         // - get element from your dataset at this position
         // - replace the contents of the view with that element
@@ -72,7 +91,7 @@ public class AlarmAdapter extends RecyclerView.Adapter<AlarmAdapter.ViewHolder> 
         });
 
         holder.txtFooter.setText("Footer: " + name);
-    }
+    }*/
 
     // Return the size of your dataset (invoked by the layout manager)
     @Override
